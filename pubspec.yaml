@@ -37,6 +37,13 @@ dependencies:
   flutter_screenutil: ^5.9.3
   google_fonts: ^8.0.1
   flutter_svg: ^2.2.3
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  dartz: ^0.10.1
+  equatable: ^2.0.8
+  flutter_bloc: ^9.1.1
+  get_it: ^9.2.0
+  injectable: ^2.7.1+4
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +55,9 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
+  injectable_generator:
+  # add build runner if not already added
+  build_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

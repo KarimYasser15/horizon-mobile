@@ -7,10 +7,10 @@ class DefaultSubmitButton extends StatelessWidget {
   const DefaultSubmitButton({
     super.key,
     required this.title,
-    required this.onPressed,
+    this.onPressed,
   });
   final String title;
-  final void Function() onPressed;
+  final VoidCallback? onPressed;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -21,7 +21,7 @@ class DefaultSubmitButton extends StatelessWidget {
           backgroundColor: ColorsManager.blue,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         child: Text(
           title,
           style: TextStyleManager.interMedium.copyWith(

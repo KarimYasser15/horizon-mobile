@@ -9,11 +9,15 @@ class LabeledTextFieldWidget extends StatelessWidget {
     this.hint,
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
+    this.controller,
   });
+
   final String label;
   final String? hint;
   final bool obscureText;
   final TextInputType keyboardType;
+  final TextEditingController? controller;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -22,6 +26,7 @@ class LabeledTextFieldWidget extends StatelessWidget {
         Text(label, style: TextStyleManager.interMedium),
         const SizedBox(height: 8),
         TextField(
+          controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
           decoration: InputDecoration(hintText: hint),

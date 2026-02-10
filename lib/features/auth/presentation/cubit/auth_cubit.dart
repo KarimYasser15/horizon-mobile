@@ -1,0 +1,32 @@
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:horizon_mobile/features/auth/data/models/login_request.dart';
+import 'package:horizon_mobile/features/auth/data/models/register_request.dart';
+import 'package:horizon_mobile/features/auth/domain/usecases/login.dart';
+import 'package:horizon_mobile/features/auth/domain/usecases/register.dart';
+import 'package:horizon_mobile/features/auth/presentation/cubit/auth_states.dart';
+
+class AuthCubit extends Cubit<AuthStates> {
+  AuthCubit(this._login, this._register) : super(AuthInitial());
+  final Login _login;
+  final Register _register;
+
+  Future<void> login(String email, String password) async {
+    emit(AuthLoading());
+    final result = await _login(LoginRequest(email: email, password: password));
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (userCredential) => emit(LoginSuccess()),
+    );
+  }
+
+  Future<void> register(String fullName, String email, String password) async {
+    emit(AuthLoading());
+    final result = await _register(
+      RegisterRequest(fullName: fullName, email: email, password: password),
+    );
+    result.fold(
+      (failure) => emit(AuthFailure(failure.message)),
+      (userCredential) => emit(RegisterSuccess()),
+    );
+  }
+}
