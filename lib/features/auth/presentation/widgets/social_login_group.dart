@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:horizon_mobile/config/assets_manager.dart';
 import 'package:horizon_mobile/config/strings_manager.dart';
+import 'package:horizon_mobile/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:horizon_mobile/features/auth/presentation/widgets/social_auth_button.dart';
 
 class SocialLoginGroup extends StatelessWidget {
@@ -13,7 +15,9 @@ class SocialLoginGroup extends StatelessWidget {
     final googleButton = SocialAuthButton(
       icon: SvgPicture.asset(IconsManager.google),
       buttonText: StringsManager.google,
-      onPressed: () {},
+      onPressed: () {
+        context.read<AuthCubit>().signInWithGoogle();
+      },
     );
 
     final appleButton = SocialAuthButton(
