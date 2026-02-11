@@ -31,12 +31,20 @@ class AuthApiRemoteDataSource implements AuthRemoteDataSource {
   @override
   Future<UserCredential> register(RegisterRequest request) async {
     try {
-      final UserCredential user = await _firebaseAuth
+      final UserCredential userCredential = await _firebaseAuth
           .createUserWithEmailAndPassword(
             email: request.email,
             password: request.password,
           );
-      return user;
+
+      final user = userCredential.user;
+
+      if (user != null) {
+        await user.updateDisplayName(request.fullName);
+        await user.reload();
+      }
+
+      return userCredential;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         throw WeakPasswordException();

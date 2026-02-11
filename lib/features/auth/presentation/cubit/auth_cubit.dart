@@ -15,7 +15,8 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _login(LoginRequest(email: email, password: password));
     result.fold(
       (failure) => emit(AuthFailure(failure.message)),
-      (userCredential) => emit(LoginSuccess()),
+      (userCredential) =>
+          emit(LoginSuccess(displayName: userCredential.user?.displayName)),
     );
   }
 

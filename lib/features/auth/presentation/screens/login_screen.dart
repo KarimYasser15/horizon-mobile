@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:horizon_mobile/config/routes_manager.dart';
 import 'package:horizon_mobile/config/strings_manager.dart';
 import 'package:horizon_mobile/core/utils/ui_utils.dart';
 import 'package:horizon_mobile/core/widgets/default_submit_button.dart';
@@ -56,8 +57,10 @@ class _LoginScreenState extends State<LoginScreen> {
             ).showSnackBar(SnackBar(content: Text(state.message)));
           }
           if (state is LoginSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Logged in successfully')),
+            Navigator.pushReplacementNamed(
+              context,
+              RoutesManager.home,
+              arguments: state.displayName,
             );
           }
         }
