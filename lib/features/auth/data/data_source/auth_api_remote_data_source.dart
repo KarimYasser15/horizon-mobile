@@ -3,7 +3,9 @@ import 'package:horizon_mobile/core/error/exceptions.dart';
 import 'package:horizon_mobile/features/auth/data/data_source/auth_remote_data_source.dart';
 import 'package:horizon_mobile/features/auth/data/models/login_request.dart';
 import 'package:horizon_mobile/features/auth/data/models/register_request.dart';
+import 'package:injectable/injectable.dart';
 
+@Injectable(as: AuthRemoteDataSource)
 class AuthApiRemoteDataSource implements AuthRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
   AuthApiRemoteDataSource(this._firebaseAuth);

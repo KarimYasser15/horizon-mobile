@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:horizon_mobile/config/colors_manager.dart';
-import 'package:horizon_mobile/features/home/domain/models/destination_model.dart';
+import 'package:horizon_mobile/core/di/service_locator.dart';
+import 'package:horizon_mobile/features/home/presentation/cubit/home_cubit.dart';
+import 'package:horizon_mobile/features/home/presentation/cubit/home_states.dart';
 import 'package:horizon_mobile/features/home/presentation/widgets/category_selector.dart';
 import 'package:horizon_mobile/features/home/presentation/widgets/home_bottom_nav_bar.dart';
 import 'package:horizon_mobile/features/home/presentation/widgets/home_header.dart';
@@ -14,56 +17,43 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final recommendedDestinations = [
-      DestinationModel(
-        id: '1',
-        name: 'Modern Loft',
-        location: 'Central District',
-        price: 120,
-        imageUrl:
-            'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=400&q=80',
-      ),
-      DestinationModel(
-        id: '2',
-        name: 'Woodland Cabin',
-        location: 'North Hills',
-        price: 85,
-        imageUrl:
-            'https://images.unsplash.com/photo-1449156233229-30243440e90c?auto=format&fit=crop&w=400&q=80',
-      ),
-      DestinationModel(
-        id: '3',
-        name: 'Beachside Suite',
-        location: 'Coastal Bay',
-        price: 200,
-        imageUrl:
-            'https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=400&q=80',
-      ),
-    ];
-
-    return Scaffold(
-      backgroundColor: ColorsManager.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            HomeHeader(userName: userName),
-            const SearchBarWidget(),
-            const CategorySelector(),
-            const RecommendedSection(),
-            Expanded(
-              child: ListView.builder(
-                itemCount: recommendedDestinations.length,
-                itemBuilder: (context, index) {
-                  return RecommendedItemWidget(
-                    destination: recommendedDestinations[index],
-                  );
-                },
+    return BlocProvider(
+      create: (context) => getIt<HomeCubit>()..fetchDestinations(),
+      child: Scaffold(
+        backgroundColor: ColorsManager.white,
+        body: SafeArea(
+          child: Column(
+            children: [
+              HomeHeader(userName: userName),
+              const SearchBarWidget(),
+              const CategorySelector(),
+              const RecommendedSection(),
+              Expanded(
+                child: BlocBuilder<HomeCubit, HomeState>(
+                  builder: (context, state) {
+                    if (state is HomeLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (state is HomeLoaded) {
+                      return ListView.builder(
+                        itemCount: state.products.length,
+                        itemBuilder: (context, index) {
+                          return RecommendedItemWidget(
+                            destination: state.products[index],
+                          );
+                        },
+                      );
+                    } else if (state is HomeError) {
+                      return Center(child: Text(state.message));
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+        bottomNavigationBar: const HomeBottomNavBar(),
       ),
-      bottomNavigationBar: const HomeBottomNavBar(),
     );
   }
 }

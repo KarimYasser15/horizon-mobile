@@ -4,7 +4,9 @@ import 'package:horizon_mobile/features/auth/data/models/register_request.dart';
 import 'package:horizon_mobile/features/auth/domain/usecases/login.dart';
 import 'package:horizon_mobile/features/auth/domain/usecases/register.dart';
 import 'package:horizon_mobile/features/auth/presentation/cubit/auth_states.dart';
+import 'package:injectable/injectable.dart';
 
+@injectable
 class AuthCubit extends Cubit<AuthStates> {
   AuthCubit(this._login, this._register) : super(AuthInitial());
   final Login _login;
