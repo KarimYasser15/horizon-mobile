@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:horizon_mobile/core/error/exceptions.dart';
 import 'package:horizon_mobile/features/auth/data/data_source/auth_remote_data_source.dart';
 import 'package:horizon_mobile/features/auth/data/models/login_request.dart';
@@ -8,7 +9,8 @@ import 'package:injectable/injectable.dart';
 @Injectable(as: AuthRemoteDataSource)
 class AuthApiRemoteDataSource implements AuthRemoteDataSource {
   final FirebaseAuth _firebaseAuth;
-  AuthApiRemoteDataSource(this._firebaseAuth);
+  final GoogleSignIn _googleSignIn;
+  AuthApiRemoteDataSource(this._firebaseAuth, this._googleSignIn);
 
   @override
   Future<UserCredential> login(LoginRequest request) async {
@@ -55,6 +57,28 @@ class AuthApiRemoteDataSource implements AuthRemoteDataSource {
       } else {
         throw ServerException(e.message);
       }
+    }
+  }
+
+  @override
+  Future<UserCredential> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw ServerException('Google sign in cancelled');
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      return await _firebaseAuth.signInWithCredential(credential);
+    } catch (e) {
+      throw ServerException(e.toString());
     }
   }
 }
