@@ -11,6 +11,7 @@ import 'package:horizon_mobile/features/auth/presentation/widgets/dont_have_an_a
 import 'package:horizon_mobile/features/auth/presentation/widgets/labeled_text_field_widget.dart';
 import 'package:horizon_mobile/features/auth/presentation/widgets/social_login_divider.dart';
 import 'package:horizon_mobile/features/auth/presentation/widgets/social_login_group.dart';
+import 'package:horizon_mobile/core/utils/validators.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,6 +23,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -37,10 +40,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onLoginPressed() {
-    context.read<AuthCubit>().login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthCubit>().login(
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+    }
   }
 
   @override
@@ -68,30 +73,35 @@ class _LoginScreenState extends State<LoginScreen> {
       child: AuthDecorationWidget(
         mainTitle: StringsManager.welcomeBack,
         subTitle: StringsManager.welcomeBackDescription,
-        child: Column(
-          children: [
-            LabeledTextFieldWidget(
-              label: 'Email Address',
-              hint: 'sarah@example.com',
-              keyboardType: TextInputType.emailAddress,
-              controller: _emailController,
-            ),
-            LabeledTextFieldWidget(
-              label: 'Password',
-              hint: '*****',
-              obscureText: true,
-              controller: _passwordController,
-            ),
-            const SizedBox(height: 8),
-            DefaultSubmitButton(
-              title: StringsManager.login,
-              onPressed: _onLoginPressed,
-            ),
-            const SocialLoginDivider(),
-            const SocialLoginGroup(),
-            const SizedBox(height: 24),
-            const DontHaveAnAccountText(),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              LabeledTextFieldWidget(
+                label: 'Email Address',
+                hint: 'sarah@example.com',
+                keyboardType: TextInputType.emailAddress,
+                controller: _emailController,
+                validator: Validators.validateEmail,
+              ),
+              LabeledTextFieldWidget(
+                label: 'Password',
+                hint: '*****',
+                obscureText: true,
+                controller: _passwordController,
+                validator: Validators.validatePassword,
+              ),
+              const SizedBox(height: 8),
+              DefaultSubmitButton(
+                title: StringsManager.login,
+                onPressed: _onLoginPressed,
+              ),
+              const SocialLoginDivider(),
+              const SocialLoginGroup(),
+              const SizedBox(height: 24),
+              const DontHaveAnAccountText(),
+            ],
+          ),
         ),
       ),
     );
