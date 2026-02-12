@@ -10,6 +10,7 @@ import 'package:horizon_mobile/features/auth/presentation/widgets/auth_decoratio
 import 'package:horizon_mobile/features/auth/presentation/widgets/labeled_text_field_widget.dart';
 import 'package:horizon_mobile/features/auth/presentation/widgets/social_login_divider.dart';
 import 'package:horizon_mobile/features/auth/presentation/widgets/social_login_group.dart';
+import 'package:horizon_mobile/core/utils/validators.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -22,12 +23,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController _fullNameController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
     _fullNameController = TextEditingController();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
   }
 
   @override
@@ -35,15 +40,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     _fullNameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _onRegisterPressed() {
-    context.read<AuthCubit>().register(
-      _fullNameController.text.trim(),
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthCubit>().register(
+        _fullNameController.text.trim(),
+        _emailController.text.trim(),
+        _passwordController.text,
+      );
+    }
   }
 
   @override
@@ -70,35 +78,51 @@ class _RegisterScreenState extends State<RegisterScreen> {
         return AuthDecorationWidget(
           mainTitle: StringsManager.createAccount,
           subTitle: StringsManager.createAccountDescription,
-          child: Column(
-            children: [
-              LabeledTextFieldWidget(
-                label: 'Full Name',
-                hint: 'Sarah Miller',
-                controller: _fullNameController,
-              ),
-              LabeledTextFieldWidget(
-                label: 'Email Address',
-                hint: 'sarah@example.com',
-                keyboardType: TextInputType.emailAddress,
-                controller: _emailController,
-              ),
-              LabeledTextFieldWidget(
-                label: 'Password',
-                hint: '*****',
-                obscureText: true,
-                controller: _passwordController,
-              ),
-              const SizedBox(height: 8),
-              DefaultSubmitButton(
-                title: StringsManager.signUp,
-                onPressed: _onRegisterPressed,
-              ),
-              const SocialLoginDivider(),
-              const SocialLoginGroup(),
-              const SizedBox(height: 24),
-              const AlreadyHaveAnAccountText(),
-            ],
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                LabeledTextFieldWidget(
+                  label: 'Full Name',
+                  hint: 'Sarah Miller',
+                  controller: _fullNameController,
+                  validator: Validators.validateFullName,
+                ),
+                LabeledTextFieldWidget(
+                  label: 'Email Address',
+                  hint: 'sarah@example.com',
+                  keyboardType: TextInputType.emailAddress,
+                  controller: _emailController,
+                  validator: Validators.validateEmail,
+                ),
+                LabeledTextFieldWidget(
+                  label: 'Password',
+                  hint: '*****',
+                  obscureText: true,
+                  controller: _passwordController,
+                  validator: Validators.validatePassword,
+                ),
+                LabeledTextFieldWidget(
+                  label: 'Confirm Password',
+                  hint: '*****',
+                  obscureText: true,
+                  controller: _confirmPasswordController,
+                  validator: (value) => Validators.validateConfirmPassword(
+                    value,
+                    _passwordController.text,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DefaultSubmitButton(
+                  title: StringsManager.signUp,
+                  onPressed: _onRegisterPressed,
+                ),
+                const SocialLoginDivider(),
+                const SocialLoginGroup(),
+                const SizedBox(height: 24),
+                const AlreadyHaveAnAccountText(),
+              ],
+            ),
           ),
         );
       },

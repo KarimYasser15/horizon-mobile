@@ -10,6 +10,8 @@ class LabeledTextFieldWidget extends StatelessWidget {
     this.obscureText = false,
     this.keyboardType = TextInputType.text,
     this.controller,
+    this.validator,
+    this.onChanged,
   });
 
   final String label;
@@ -17,6 +19,8 @@ class LabeledTextFieldWidget extends StatelessWidget {
   final bool obscureText;
   final TextInputType keyboardType;
   final TextEditingController? controller;
+  final String? Function(String?)? validator;
+  final void Function(String)? onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -25,10 +29,13 @@ class LabeledTextFieldWidget extends StatelessWidget {
       children: [
         Text(label, style: TextStyleManager.interMedium),
         const SizedBox(height: 8),
-        TextField(
+        TextFormField(
           controller: controller,
           obscureText: obscureText,
           keyboardType: keyboardType,
+          validator: validator,
+          onChanged: onChanged,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           decoration: InputDecoration(hintText: hint),
         ),
         SizedBox(height: 16.h),
