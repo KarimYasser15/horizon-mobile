@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:horizon_mobile/config/assets_manager.dart';
 import 'package:horizon_mobile/config/strings_manager.dart';
 import 'package:horizon_mobile/config/text_style_manager.dart';
 
@@ -27,10 +29,20 @@ class HomeHeader extends StatelessWidget {
               ),
             ],
           ),
-          CircleAvatar(
-            radius: 20.r,
-            backgroundImage: const NetworkImage(
-              'https://i.pravatar.cc/150?u=sarah',
+          Container(
+            width: 40.r,
+            height: 40.r,
+            padding: EdgeInsets.all(8.r),
+            decoration: BoxDecoration(
+              color: const Color(0xffF1F5F9),
+              shape: BoxShape.circle,
+            ),
+            child: SvgPicture.asset(
+              IconsManager.profile,
+              colorFilter: ColorFilter.mode(
+                const Color(0xff94A3B8),
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ],
